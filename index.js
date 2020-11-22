@@ -1,79 +1,77 @@
 const game = document.querySelector(".game");
 const character = document.querySelector(".character");
-let panelS = 5;
-let PlayerBottom = 0;
-let MoveControl = 300;
 let isGoing = false;
 let leftTimerId;
 let rightTimerId;
-let width = 300;
 let left = 0;
 let gravity = 0.9 ; 
-let Value = 0
-let platGap = 300;
 let jump = 0;
 let bottom = 0;
+let test = 0
+let active = test
+let platforms = [];
 
 
-let startPoint = 150
-let doodlerBottomSpace = startPoint
-
-function createPlatforms(){
-    for (let i = 0; i < 6; i++) {
-        let platGap = 700 / 6
-        let newPlatBottom = 100 + i * platGap
-        Platform(newPlatBottom)
-    }
-}
-createPlatforms()
-
-
-function Platform(Proportions){
-    let h = Math.floor(Math.random() * 4),
-        top = h * 70  ,
-        bottom = Proportions,
-        visual = document.createElement("div");
-        visual.classList.add("platform");
-        visual.style.left = top + "px";
-        visual.style.top= bottom + "px";
-        function MoveBlock(){
-            if (doodlerBottomSpace > 200) {
-                bottom += 4
-                visual.style.left = top + "px";
-                visual.style.top = bottom + "px";
-
-                console.log(bottom  )
-            }
-    }
-    setInterval(MoveBlock,30)
-
-    game.appendChild(visual);
+const SS = function(Gap){
+    this.left  = Math.random() * 315  ; 
+    this.bottom = Gap;
+    this.visual = document.createElement('div');
+    const visual = this.visual;
+    const bottom = this.bottom;
+    const left = this.left
+    visual.classList.add('platform')
+    visual.style.left = left + 'px'
+    visual.style.bottom = bottom + 'px'
+    game.appendChild(visual)
 }
 
-function JumpCharacter(){
-    let upTimerId = setInterval(function () {
+const  CreatePlatform = () =>  {
+    let plat = [0,1,2,3,4];
+    plat.forEach(i =>{
+        let Gap = 100 + i * 120
+        let test = new SS(Gap);
+        platforms.push(test)
+    })
+}
+
+const Platform = () =>{
+    for (let i = 0; i < platforms.length; i++){
+        MovePlatformDown(i);
+        CreateNewPlatform(i);
+    }
+}
+
+const  JumpCharacter =() => {
+    let upTimerId = setInterval(function (){
+        if (active === 900) {
+            setTimeout(Platform(600),1 )
+        }
         if (bottom > 250) {
+            active -= 20;
             clearInterval(upTimerId);
             let downTimerId = setInterval(function () {
                 if (bottom < 0) {
                     clearInterval(downTimerId);
                 }
+                active -= 40;
                 bottom -= 5;
-                doodlerBottomSpace = 150;
                 bottom = bottom * gravity;
                 character.style.bottom = bottom + "px";
-
-                if (bottom < 10) {
-                    Platform()
-                }
             }, 20);
         }
-
-        doodlerBottomSpace += 30;
+        active += 30
         bottom += 30;
         bottom = bottom * gravity;
         character.style.bottom = bottom + "px";
+        Collision(active);
+
     }, 20);
+}
+
+
+const Collision = (active) =>{
+
+
 }
 
 const MoveLeft = () =>{
@@ -98,13 +96,29 @@ const MoveRight = () =>{
     }, 20);    
 }
 
+const  CreateNewPlatform = (i) => {
+    if (platforms[i].bottom < 10) {
+        platforms[0].visual.classList.remove("platform");
+        platforms.shift();
+        let test = new SS(600);
+        platforms.push(test);
+    }
+}
+
+const  MovePlatformDown =(i) => {
+    if (active > 20) {
+        platforms[i].bottom -= 4;
+        platforms[i].visual.style.bottom = platforms[i].bottom + "px";
+    }
+}
+
 const  Joystick = (e) => {
     if (e.keyCode === 68 ) {
         MoveRight();
     } else if (e.keyCode === 65 ) {
         MoveLeft();
     } else if (e.keyCode === 32) {
-        JumpCharacter(startPoint);
+        JumpCharacter(test);
     }
 }
 
@@ -117,8 +131,7 @@ function ClearState(){
     left = 280;
     clearInterval(rightTimerId);
 }
+
 document.addEventListener("keyup", Joystick)
-
-
-
-
+CreatePlatform();
+setInterval(Platform,20)
