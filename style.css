@@ -1,6 +1,7 @@
 *{
     padding: 0;
     margin: 0;
+    overflow: hidden;
 }
 
 .index{
@@ -22,10 +23,7 @@
     width: 90px;
     height: 14px;
     background-color: black;
-    border-radius: 100px;
-    top: -10px;
-    left: 0;
-    margin: 40px;
+
 }
 
 
@@ -35,4 +33,9 @@
     background-color: black;
     position: absolute;
     bottom: 0;
+}
+
+
+.colider{
+    background-color: red;
 }
