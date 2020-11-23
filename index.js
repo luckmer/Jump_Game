@@ -1,5 +1,6 @@
 const game = document.querySelector(".game");
 const character = document.querySelector(".character");
+const Play = document.querySelector("button");
 let isGoing = false;
 let leftTimerId;
 let rightTimerId;
@@ -9,8 +10,8 @@ let jump = 0;
 let bottom = 0;
 let test = 0
 let active = test
-let platforms = [];
-
+let TestLeft = left;
+let table = [];
 
 const SS = function(Gap){
     this.left  = Math.random() * 315  ; 
@@ -30,12 +31,12 @@ const  CreatePlatform = () =>  {
     plat.forEach(i =>{
         let Gap = 100 + i * 120
         let test = new SS(Gap);
-        platforms.push(test)
+        table.push(test)
     })
 }
 
 const Platform = () =>{
-    for (let i = 0; i < platforms.length; i++){
+    for (let i = 0; i < table.length; i++){
         MovePlatformDown(i);
         CreateNewPlatform(i);
     }
@@ -43,11 +44,9 @@ const Platform = () =>{
 
 const  JumpCharacter =() => {
     let upTimerId = setInterval(function (){
-        if (active === 900) {
-            setTimeout(Platform(600),1 )
-        }
         if (bottom > 250) {
             active -= 20;
+
             clearInterval(upTimerId);
             let downTimerId = setInterval(function () {
                 if (bottom < 0) {
@@ -55,33 +54,43 @@ const  JumpCharacter =() => {
                 }
                 active -= 40;
                 bottom -= 5;
+                Collision(active,TestLeft);
                 bottom = bottom * gravity;
                 character.style.bottom = bottom + "px";
             }, 20);
-        }
-        active += 30
+        };
+        active += 30;
         bottom += 30;
         bottom = bottom * gravity;
         character.style.bottom = bottom + "px";
-        Collision(active);
-
     }, 20);
 }
 
 
-const Collision = (active) =>{
+const Collision = (top,TestLeft) =>{
+    table.forEach(item =>{
+        
+        let colider = item.left;
+        let first = table[0].left;
+        let bottom = item.bottom;
+        if (
+            top >= bottom && 
+            top <= bottom + 85 
+        
+        ) {
+            console.log(top,TestLeft)
+        };
 
-
-}
-
+    });
+};
 const MoveLeft = () =>{
     if (isGoing == false) { 
         clearInterval(rightTimerId)
     } 
     leftTimerId = setInterval(function () {
-        left -= 5;     
-        left < 0 ? ClearRightInterval() : [];
-        character.style.left = left + "px";
+        TestLeft -= 5;     
+        TestLeft < 0 ? ClearRightInterval() : [];
+        character.style.left = TestLeft + "px";
     }, 20);
 }
 
@@ -90,33 +99,33 @@ const MoveRight = () =>{
         clearInterval(leftTimerId)
     } 
     rightTimerId = setInterval(function (){
-        left += 5;
-        left > 280 ? ClearState() : [];
-        character.style.left = left + "px";
+        TestLeft += 5;
+        TestLeft > 280 ? ClearState() : [];
+        character.style.left = TestLeft + "px";
     }, 20);    
 }
 
 const  CreateNewPlatform = (i) => {
-    if (platforms[i].bottom < 10) {
-        platforms[0].visual.classList.remove("platform");
-        platforms.shift();
+    if (table[i].bottom < 10) {
+        table[0].visual.classList.remove("platform");
+        table.shift();
         let test = new SS(600);
-        platforms.push(test);
+        table.push(test);
     }
 }
 
 const  MovePlatformDown =(i) => {
-    if (active > 20) {
-        platforms[i].bottom -= 4;
-        platforms[i].visual.style.bottom = platforms[i].bottom + "px";
+    if (active > 20000) {
+        table[i].bottom -= 4;
+        table[i].visual.style.bottom = table[i].bottom + "px";
     }
 }
 
 const  Joystick = (e) => {
     if (e.keyCode === 68 ) {
-        MoveRight();
+        MoveRight(left);
     } else if (e.keyCode === 65 ) {
-        MoveLeft();
+        MoveLeft(left);
     } else if (e.keyCode === 32) {
         JumpCharacter(test);
     }
@@ -132,6 +141,15 @@ function ClearState(){
     clearInterval(rightTimerId);
 }
 
-document.addEventListener("keyup", Joystick)
+function Start(){
+
+
+}
+
 CreatePlatform();
 setInterval(Platform,20)
+
+
+Play.addEventListener("click", Start);
+document.addEventListener("keyup", Joystick)
+document.addEventListener("keydown", () =>{})
