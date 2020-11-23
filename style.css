@@ -21,11 +21,23 @@
 .platform{
     position: absolute;
     width: 90px;
-    height: 14px;
+    height: 15px;
     background-color: black;
 
 }
-
+button{
+    width: 200px;
+    height: 20px;
+    border-radius: 100px;
+    border: none;
+    background-color: black;
+    color: white;
+    cursor: pointer;
+    position:absolute; 
+    top:80%; 
+    left:50%; 
+    transform:translate(-50%, -50%); 
+}
 
 .character{
     width: 50px;
